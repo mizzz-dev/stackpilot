@@ -20,3 +20,4 @@ pnpm dev
 - `docs_uiux_spec_ja.md`: UI/UX仕様（開発者向けワークスペースブラウザ）
 - `docs_mvp_execution_plan_ja.md`: MVP次段階の実行計画（Issue/状態定義/PRテンプレート）
 
+- `docs_multiplatform_strategy_ci_plan_ja.md`: マルチプラットフォーム方針とCI復旧計画（iPhone/iPad対応含む）
