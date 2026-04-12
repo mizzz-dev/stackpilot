@@ -56,7 +56,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       const snapshot = await window.stackpilot.workspace.list();
       const activeWorkspace = snapshot.workspaces.find((w) => w.id === snapshot.activeWorkspaceId) ?? snapshot.workspaces[0];
       const activeTab =
-        (snapshot.activeTabId && activeWorkspace?.tabs.find((tab) => tab.id === snapshot.activeTabId)) ??
+        (snapshot.activeTabId ? activeWorkspace?.tabs.find((tab) => tab.id === snapshot.activeTabId) : undefined) ??
         activeWorkspace?.tabs.find((tab) => tab.isActive) ??
         activeWorkspace?.tabs[0];
       const logs = activeWorkspace ? await window.stackpilot.apiLog.list(activeWorkspace.id) : [];
