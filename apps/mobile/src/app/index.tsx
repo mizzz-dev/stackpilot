@@ -13,7 +13,7 @@ const tabletBreakpoint = 768;
 
 export default function InspectorHomeScreen() {
   const { width } = useWindowDimensions();
-  const { snapshot, status, connectionMode, errorMessage, reload } = useInspector();
+  const { snapshot, status, connectionMode, errorMessage, hasPairing, reload, disconnect } = useInspector();
   const [selectedLogId, setSelectedLogId] = useState<string>();
   const isTablet = width >= tabletBreakpoint;
   const selectedLog = snapshot?.logs.find((log) => log.id === selectedLogId);
@@ -34,7 +34,10 @@ export default function InspectorHomeScreen() {
           mode={connectionMode}
           status={status}
           errorMessage={errorMessage}
+          hasPairing={hasPairing}
           onReload={() => void reload()}
+          onPair={() => router.push('/pair')}
+          onDisconnect={() => void disconnect()}
         />
 
         {snapshot ? (
