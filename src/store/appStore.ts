@@ -5,6 +5,7 @@ import {
   createInitialInspectorState,
   defaultInspectorFilter,
   filterLogs,
+  findSelectedLog,
   toNetworkLog,
   type InspectorFilter,
   type InspectorState
@@ -38,6 +39,7 @@ interface AppState {
   navigate: (url: string) => Promise<void>;
   openDevTools: () => Promise<void>;
   setInspectorFilter: (kind: InspectorFilter['kind']) => void;
+  selectInspectorLog: (logId?: string) => void;
   createWorkspace: (input: CreateWorkspaceFormInput) => Promise<void>;
   requestRiskConfirmation: (request: RiskConfirmationRequest) => boolean;
   resolveRiskConfirmation: (decision: RiskDialogDecision) => RiskConfirmationRequest | undefined;
@@ -86,6 +88,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         inspector: {
           ...get().inspector,
           logs: logs.map(toNetworkLog),
+          selectedLogId: undefined,
           isLoading: false,
           errorMessage: undefined,
           filter: defaultInspectorFilter
@@ -102,7 +105,10 @@ export const useAppStore = create<AppState>((set, get) => ({
     const targetWorkspace = snapshot.workspaces.find((w) => w.id === workspaceId);
     if (!targetWorkspace) return;
 
-    set((state) => ({ ...startWorkspaceSwitch(state, workspaceId), inspector: { ...state.inspector, isLoading: true, errorMessage: undefined } }));
+    set((state) => ({
+      ...startWorkspaceSwitch(state, workspaceId),
+      inspector: { ...state.inspector, selectedLogId: undefined, isLoading: true, errorMessage: undefined }
+    }));
 
     const activeTab = targetWorkspace.tabs.find((tab) => tab.isActive) ?? targetWorkspace.tabs[0];
     if (activeTab) {
@@ -119,6 +125,7 @@ export const useAppStore = create<AppState>((set, get) => ({
         inspector: {
           ...state.inspector,
           logs: logs.map(toNetworkLog),
+          selectedLogId: undefined,
           isLoading: false,
           errorMessage: undefined
         }
@@ -128,7 +135,13 @@ export const useAppStore = create<AppState>((set, get) => ({
         ...completeWorkspaceSwitch(state, workspaceId),
         activeWorkspace: targetWorkspace,
         activeTabId: activeTab?.id,
-        inspector: { ...state.inspector, logs: [], isLoading: false, errorMessage: 'ログ取得に失敗しました。' }
+        inspector: {
+          ...state.inspector,
+          logs: [],
+          selectedLogId: undefined,
+          isLoading: false,
+          errorMessage: 'ログ取得に失敗しました。'
+        }
       }));
     }
   },
@@ -158,7 +171,15 @@ export const useAppStore = create<AppState>((set, get) => ({
     await window.stackpilot.browser.openDevTools();
   },
   setInspectorFilter: (kind) => {
-    set((state) => ({ inspector: { ...state.inspector, filter: { kind } } }));
+    set((state) => ({ inspector: { ...state.inspector, filter: { kind }, selectedLogId: undefined } }));
+  },
+  selectInspectorLog: (logId) => {
+    set((state) => ({
+      inspector: {
+        ...state.inspector,
+        selectedLogId: logId && state.inspector.logs.some((log) => log.id === logId) ? logId : undefined
+      }
+    }));
   },
   createWorkspace: async (input) => {
     await window.stackpilot.workspace.create({
@@ -187,3 +208,4 @@ export const useAppStore = create<AppState>((set, get) => ({
 }));
 
 export const selectFilteredLogs = (state: AppState) => filterLogs(state.inspector.logs, state.inspector.filter);
+export const selectSelectedLog = (state: AppState) => findSelectedLog(state.inspector.logs, state.inspector.selectedLogId);
