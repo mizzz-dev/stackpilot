@@ -10,5 +10,9 @@ export const CHANNELS = {
   apiLogList: 'api-log:list',
   apiLogReceived: 'api-log:received',
   riskConfirmationRequested: 'risk:confirmation-requested',
-  riskConfirmationRespond: 'risk:confirmation-respond'
+  riskConfirmationRespond: 'risk:confirmation-respond',
+  mobilePairingGetStatus: 'mobile-pairing:get-status',
+  mobilePairingStart: 'mobile-pairing:start',
+  mobilePairingStop: 'mobile-pairing:stop',
+  mobilePairingStatusChanged: 'mobile-pairing:status-changed'
 } as const;
