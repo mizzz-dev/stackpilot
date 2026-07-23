@@ -92,11 +92,12 @@ export const createSafeRequestBodyPreview = (
     return unavailablePreview('unsupported-content-type', input.byteLength, contentType);
   }
 
-  if (contentType === 'application/x-www-form-urlencoded') {
-    return sanitizeFormBody(input.rawBody, input.byteLength, contentType);
+  const supportedContentType = contentType as string;
+  if (supportedContentType === 'application/x-www-form-urlencoded') {
+    return sanitizeFormBody(input.rawBody, input.byteLength, supportedContentType);
   }
 
-  return sanitizeJsonBody(input.rawBody, input.byteLength, contentType);
+  return sanitizeJsonBody(input.rawBody, input.byteLength, supportedContentType);
 };
 
 export const formatRequestBodyUnavailableReason = (reason?: RequestBodyUnavailableReason): string => {
