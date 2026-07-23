@@ -64,7 +64,7 @@ export const isSupportedRequestBodyContentType = (contentType?: string): boolean
   return Boolean(
     normalized &&
       (normalized === 'application/json' ||
-        normalized.endsWith('+json') ||
+        (normalized.startsWith('application/') && normalized.endsWith('+json')) ||
         normalized === 'application/x-www-form-urlencoded')
   );
 };
