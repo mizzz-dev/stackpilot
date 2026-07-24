@@ -165,6 +165,7 @@ export const isSensitiveExportHeaderName = (name: string): boolean => {
   const normalized = name.trim().toLowerCase();
   const compact = normalized.replace(/[^a-z0-9]/g, '');
   return (
+    isSensitiveRequestBodyFieldName(name) ||
     sensitiveHeaderNames.has(normalized) ||
     compact.endsWith('token') ||
     compact.endsWith('apikey') ||
@@ -329,7 +330,7 @@ const toHarEntry = (log: SafeExportLog) => {
           }
         : undefined,
       headersSize: -1,
-      bodySize: requestBody?.byteLength ?? 0
+      bodySize: log.requestBody?.byteLength ?? 0
     },
     response: {
       status: log.status ?? 0,
